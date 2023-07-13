@@ -20,7 +20,11 @@ export default {
       };
 
       await userStore.login(credentials);
-      this.$router.push('/');
+      if (this.usuario.email.includes('@admin')) {
+        this.$router.push('/admin');
+      } else {
+        this.$router.push('/');
+      }
     },
   },
 };

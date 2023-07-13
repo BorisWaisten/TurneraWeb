@@ -1,6 +1,6 @@
 <script>
-import { useCanchasStore } from "../stores/canchas.js";
-import { useUserStore } from "../stores/user.js";
+import { useCanchasStore } from "../../stores/canchas.js";
+import { useUserStore } from "../../stores/user.js";
 export default {
   data() {
     return {
@@ -18,17 +18,18 @@ export default {
     this.getUser();
   },
   methods: {
-    async getUser(){
+    async getUser() {
       this.user = await useUserStore().getUser();
     },
 
     fetchCanchas() {
       const canchasStore = useCanchasStore();
-      canchasStore.fetchCanchas()
+      canchasStore
+        .fetchCanchas()
         .then(() => {
           this.canchas = canchasStore.canchas;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     },
@@ -44,65 +45,77 @@ export default {
       const cancha = this.getCanchaByTitulo(titulo);
       return cancha ? cancha.tipo : "";
     },
-    async eliminarReserva(titulo,dia,horario) {
+    async eliminarReserva(titulo, dia, horario) {
       //que se fije también por hora
-      const reserva={
+      const reserva = {
         titulo: titulo,
         dia: dia,
-        horario: horario
-      }
-      if (confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
+        horario: horario,
+      };
+      let mensaje =
+        this.getDiferenciaDias(dia) == 0
+          ? "¿Estás seguro de que deseas eliminar esta reserva?\n\n Se le cobrará una multa de $2000 por cancelar la reserva con menos de un día de anticipación."
+          : "¿Estás seguro de que deseas eliminar esta reserva?";
+      if (confirm(mensaje)) {
         try {
-        this.user = await useUserStore().eliminarReserva(reserva);
-        this.$router.push('/reservations');
-      } catch (error) {
-        console.log(error);
-      }
+          this.user = await useUserStore().eliminarReserva(reserva);
+        } catch (error) {
+          console.log(error);
+        }
       }
     },
-    
-    esFechaPosteriorHoy(dia) {
-    // Verificar si el parámetro 'dia' está presente
-    if (!dia) {
-      return false;
-    }
 
-    const hoy = new Date();
-    const diaSemanaHoy = hoy.getDay();
-    const diaSemanaReserva = this.obtenerNumeroDia(dia);
+    puedeCancelar(dia) {
+      // Verificar si el parámetro 'dia' está presente
+      if (!dia) {
+        return false;
+      }
 
-    // Verificar si el día proporcionado es válido
-    if (diaSemanaReserva === -1) {
-      return false;
-    }
+      const hoy = new Date();
+      const diaSemanaHoy = hoy.getDay() + 1;
+      const diaSemanaReserva = this.obtenerNumeroDia(dia);
 
-    let diferenciaDias = diaSemanaReserva - diaSemanaHoy;
+      // Verificar si el día proporcionado es válido
+      if (diaSemanaReserva === -1) {
+        return false;
+      }
+      let diferenciaDias = this.getDiferenciaDias(dia);
 
-    // Verificar si la diferencia está dentro de los próximos 7 días
-    return diferenciaDias > 0 && diferenciaDias <= 7;
+      // Verificar si la diferencia está dentro de los próximos 7 días
+      return diferenciaDias > 1 && diferenciaDias <= 7;
     },
 
-obtenerNumeroDia(dia) {
-  const diasSemana = [
-    "Domingo",
-    "Lunes",
-    "Martes",
-    "Miercoles",
-    "Jueves",
-    "Viernes",
-    "Sábado",
-  ];
-  
-  const indice = diasSemana.indexOf(dia);
-  // Si se encuentra el día en el array, se devuelve el índice + 1
-  // para que el Domingo sea 1 y el Sábado sea 7
-  if (indice !== -1) {
-    return indice + 1;
-  } else {
-    return -1; // Si el día no se encuentra, se devuelve -1
-  }
-}
+    getDiferenciaDias(dia) {
+      const hoy = new Date();
+      const diaSemanaHoy = hoy.getDay() + 1;
+      const diaSemanaReserva = this.obtenerNumeroDia(dia);
+      // Verificar si el día proporcionado es válido
+      if (diaSemanaReserva === -1) {
+        return false;
+      }
+      let diferenciaDias = diaSemanaReserva - diaSemanaHoy;
+      return diferenciaDias;
+    },
+    obtenerNumeroDia(dia) {
+      const diasSemana = [
+        "Domingo",
+        "Lunes",
+        "Martes",
+        "Miercoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+      ];
 
+      const indice = diasSemana.indexOf(dia);
+      // Si se encuentra el día en el array, se devuelve el índice + 1
+      // para que el Domingo sea 1 y el Sábado sea 7
+      if (indice !== -1) {
+        return indice + 1;
+      } else {
+        return -1; // Si el día no se encuentra, se devuelve -1
+      }
+    },
   },
 };
 </script>
@@ -137,9 +150,10 @@ obtenerNumeroDia(dia) {
             </div>
             <div class="eliminar-container">
               <button
-                v-if="esFechaPosteriorHoy(reserva.dia)"
                 class="eliminar-btn"
-                @click="eliminarReserva(reserva.titulo, reserva.dia,reserva.horario)"
+                @click="
+                  eliminarReserva(reserva.titulo, reserva.dia, reserva.horario)
+                "
               >
                 Eliminar reserva
               </button>

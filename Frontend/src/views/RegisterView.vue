@@ -26,15 +26,17 @@ export default {
         contrasenia: nuevaPassword
       }
 
-      console.log(nuevoUsername)
-
       try {
         const response = await userStore.register(this.usuario);
         console.log(response);
-        this.$router.push('/');
+        if (response.email.includes('@admin')) {
+          this.$router.push('/admin');
+        } else {
+          this.$router.push('/');
+        }
       } catch (error) {
-        console.log(error.response.data);
-        alert(error.response.data);
+          console.log(error.response.data);
+          alert(error.response.data);
       }
     }
   },

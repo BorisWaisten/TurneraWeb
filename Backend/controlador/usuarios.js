@@ -1,11 +1,13 @@
 import ServicioUsuario from "../servicio/usuarios.js"
 import {InvalidCredentialsError} from "../errores.js"
 import validaciones from '../validaciones/usuarioValidacion.js'
+import ServicioCanchas from "../servicio/canchas.js"
 
 class ControladorUsuario {
 
   constructor() {
     this.servicioUsuario = new ServicioUsuario()
+    this.servicioCancha = new ServicioCanchas()
   }
 
   registro = async (req, res) => {

@@ -23,7 +23,7 @@ class ControladorReserva {
     } catch (error) {
         if (error instanceof ServicioError  || error instanceof ValidateError) {
           await this.servicioCanchas.agregarDatos(reqReserva)
-          res.status(422).json({ error: error.message });
+          res.status(422).json(error.message);
         }
         else{
           res.status(400).json(error.message)

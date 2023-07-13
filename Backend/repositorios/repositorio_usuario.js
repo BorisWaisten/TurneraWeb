@@ -55,7 +55,7 @@ class UsuarioRepositorio {
           datosAEditar.$set.username = datos.username;
         }
         if(datos.debe !== undefined){
-          datosAEditar.$set.debe = datos.debe;
+          datosAEditar.$set.debe = parseFloat(datos.debe);
         }
         const usuarioEditado = await this.usuariosCollection.findOneAndUpdate(filter, datosAEditar, { returnDocument: "after" });
         return usuarioEditado.value;

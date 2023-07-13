@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "../views/userViews/HomeView.vue";
+import Login from "../views/Login.vue"
+import RegisterView from "../views/RegisterView.vue"
+import ReservasView from "../views/userViews/ReservasView.vue"
+import EditarPerfilViewVue from "../views/EditarPerfilView.vue";
+import HomeAdmin from "../views/adminViews/HomeAdmin.vue"
+import PaymentView from "../views/userViews/PaymentView.vue"
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,23 +19,33 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: () => import("../views/Login.vue"),
+      component: Login,
     },
     {
       path: "/register",
       name: "register",
-      component: () => import("../views/RegisterView.vue"),
+      component: RegisterView,
     },
     {
       path: "/reservations",
       name: "reservations",
-      component: () => import("../views/ReservasView.vue"),
+      component: ReservasView,
     },
     {
       path: "/editProfile",
       name: "editProfile",
-      component: () => import("../views/EditarPerfilView.vue"),
-    }
+      component: EditarPerfilViewVue,
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: HomeAdmin
+    },
+    {
+      path:"/payment",
+      name:"payment",
+      component: PaymentView
+    },
   ],
 });
 
